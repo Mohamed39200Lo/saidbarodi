@@ -70,7 +70,7 @@ def load_data():
     response = requests.get(f"https://api.github.com/gists/{GIST_ID}", headers=headers)
     if response.status_code == 200:
         files = response.json().get('files', {})
-        content = files.get('data262.json', {}).get('content', '{}')
+        content = files.get('data2762.json', {}).get('content', '{}')
         return json.loads(content)
     else:
         return {}
@@ -82,7 +82,7 @@ def save_data(data):
     }
     payload = {
         "files": {
-            "data262.json": {
+            "data2762.json": {
                 "content": json.dumps(data, indent=4, default=str)
             }
         }
