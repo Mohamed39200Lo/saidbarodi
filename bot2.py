@@ -107,7 +107,7 @@ source_destination_mapping = data.get("source_destination_mapping", {})
 
 
 bot_token = "7639458197:AAEhynCgW2677brcuPHZuUOmcZw-T96RCmU"
-app2 = Client('Roozbot', api_id, api_hash,bot_token=bot_token)
+app2 = Client('session', api_id, api_hash,bot_token=bot_token)
 
 CHANNEL = "@tt66xxxn" # قناه الاشتراك 
 bot_token = "7614791348:AAEGvisvBOjcJeVi-kOzSS2hOElg2df3sDM" # بوت التوكن المستخدم في الاشتراك
