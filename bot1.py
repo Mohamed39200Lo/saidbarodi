@@ -109,46 +109,27 @@ from langdetect import detect, DetectorFactory
 DetectorFactory.seed = 0          
 async def preprocess_message_with_regex(message_text):
     text = message_text or ""
+def preprocess_message_with_regex(message_text):
+    text = message_text or ""
 
-    # إزالة الكلمات المحظورة
-    for pattern in word_patterns_to_remove:
+    for pattern in [re.compile(re.escape(word)) for word in words_to_remove]:
         text = pattern.sub("", text)
 
-    # إزالة الأسطر التي تبدأ بكلمات معينة
-    for pattern in line_patterns_to_remove_starting_with:
+    for pattern in [re.compile("^" + re.escape(line)) for line in lines_to_remove_starting_with]:
         text = remove_lines_starting_with(text, pattern)
 
-    # استبدال الجمل
-    for pattern, replacement in sentence_patterns_to_replace.items():
+    for pattern, replacement in {
+        re.compile(re.escape(old)): new for old, new in sentence_replacements.items()
+    }.items():
         text = pattern.sub(replacement, text)
 
-    # استبدال الأسطر
-    for pattern, replacement in line_patterns_to_replace.items():
+    for pattern, replacement in {
+        re.compile("^" + re.escape(old)): new for old, new in line_replacements.items()
+    }.items():
         text = replace_lines_starting_with(text, pattern, replacement)
 
-    # إزالة الأسطر الفارغة
-    text = remove_empty_lines(text.strip())
+    return remove_empty_lines(text.strip())
 
-    # الترجمة إلى العربية إذا كان النص بالإنجليزية
-    if re.search(r'[a-zA-Z]', text):  # التحقق من وجود أحرف إنجليزية
-        detected_language = "unknown"
-        try:
-            detected_language = detect(text)
-            print(detected_language)
-        except Exception as e:
-            print(f"Language detection error: {e}")
-
-        if detected_language == "en":  # النص إنجليزي
-            # الترجمة إلى العربية
-            text = await translate_to_arabic_without_links(text)
-            for pattern, replacement in sentence_patterns_to_replace.items():
-            	text = pattern.sub(replacement, text)
-
-
-            # إضافة النص الإضافي
-            additional_text = data.get("text_to_add", "")
-            text = f"{text}\n{additional_text}"
-    return text
 
 
 # معالجة الرسائل
@@ -175,7 +156,7 @@ async def copy_message(event):
 
         # إذا كانت الرسالة جزءًا من مجموعة وسائط
         if event.grouped_id:
-            time.sleep(5)
+            time.sleep(0.3)
             if event.grouped_id in processed_media_groups:
                 return
 
