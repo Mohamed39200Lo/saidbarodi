@@ -39,7 +39,7 @@ from typing import Union
 
 api_hash = 'f0c8f7e4a7a50b5c64fd5243a256fd2f'
 api_id = 16748685
-token = "7614791348:AAEGvisvBOjcJeVi-kOzSS2hOElg2df3sDM" #توكن البوت هنا
+token = "7639458197:AAEhynCgW2677brcuPHZuUOmcZw-T96RCmU" #توكن البوت هنا
 
 
 
@@ -106,7 +106,7 @@ text_to_add=data.get("text_to_add",[])
 source_destination_mapping = data.get("source_destination_mapping", {})
 
 
-bot_token = "7614791348:AAEGvisvBOjcJeVi-kOzSS2hOElg2df3sDM"
+bot_token = "7639458197:AAEhynCgW2677brcuPHZuUOmcZw-T96RCmU"
 app2 = Client('Roozbot', api_id, api_hash,bot_token=bot_token)
 
 CHANNEL = "@tt66xxxn" # قناه الاشتراك 
