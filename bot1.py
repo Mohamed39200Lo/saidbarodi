@@ -99,7 +99,7 @@ async def copy_message(event):
 
         # إذا كانت الرسالة جزءًا من مجموعة وسائط
         if event.grouped_id:
-            time.sleep(0.05)
+            time.sleep(5)
             if event.grouped_id in processed_media_groups:
                 return
 
