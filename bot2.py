@@ -108,7 +108,7 @@ source_destination_mapping = data.get("source_destination_mapping", {})
 selected_words = data.get("selected_words", [])
 
 
-bot_token = "7257913397:AAF3K9oNofc1Nvco5PCPCFO0MllLfsbCL8k"
+bot_token = "7639458197:AAEhynCgW2677brcuPHZuUOmcZw-T96RCmU"
 app2 = Client('session', api_id, api_hash,bot_token=bot_token)
 
 CHANNEL = "@tt66xxxn" # قناه الاشتراك 
