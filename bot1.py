@@ -23,7 +23,7 @@ def load_data():
     response = requests.get(f"https://api.github.com/gists/{GIST_ID}", headers=headers)
     if response.status_code == 200:
         files = response.json().get('files', {})
-        content = files.get('data2702.json', {}).get('content', '{}')
+        content = files.get('data27.json', {}).get('content', '{}')
         return json.loads(content)
     else:
         return {}
@@ -41,6 +41,7 @@ line_replacements = data.get("line_replacements", {})
 ignored_words = data.get("ignored_words", [])
 ignored_users = [15966619410, 9876543210]
 text_to_add=data.get("text_to_add",[])
+selected_words = data.get("selected_words", [])
 
 session=data.get("session",[])
 print(session)
@@ -102,11 +103,14 @@ from telethon.tl.types import InputMediaPhoto
 async def copy_message(event):
     try:
         
+        
         # تجاهل المستخدمين المحظورين
         if event.sender_id in ignored_users:
             return
             
         message_text = event.message.message or ""
+        if not any(word in message_text for word in selected_words):
+            return
         
         # التحقق من وجود كلمات محظورة
         if any(word in message_text for word in ignored_words):
