@@ -39,7 +39,7 @@ from typing import Union
 
 api_hash = 'f0c8f7e4a7a50b5c64fd5243a256fd2f'
 api_id = 16748685
-token = "7639458197:AAEhynCgW2677brcuPHZuUOmcZw-T96RCmU" #توكن البوت هنا
+token = "7257913397:AAF3K9oNofc1Nvco5PCPCFO0MllLfsbCL8k" #توكن البوت هنا
 
 
 
@@ -70,7 +70,7 @@ def load_data():
     response = requests.get(f"https://api.github.com/gists/{GIST_ID}", headers=headers)
     if response.status_code == 200:
         files = response.json().get('files', {})
-        content = files.get('data2702.json', {}).get('content', '{}')
+        content = files.get('data27.json', {}).get('content', '{}')
         return json.loads(content)
     else:
         return {}
@@ -82,7 +82,7 @@ def save_data(data):
     }
     payload = {
         "files": {
-            "data2702.json": {
+            "data27.json": {
                 "content": json.dumps(data, indent=4, default=str)
             }
         }
@@ -105,8 +105,10 @@ ignored_words = data.get("ignored_words", [])
 text_to_add=data.get("text_to_add",[])
 source_destination_mapping = data.get("source_destination_mapping", {})
 
+selected_words = data.get("selected_words", [])
 
-bot_token = "7639458197:AAEhynCgW2677brcuPHZuUOmcZw-T96RCmU"
+
+bot_token = "7257913397:AAF3K9oNofc1Nvco5PCPCFO0MllLfsbCL8k"
 app2 = Client('session', api_id, api_hash,bot_token=bot_token)
 
 CHANNEL = "@tt66xxxn" # قناه الاشتراك 
@@ -240,7 +242,7 @@ async def control_options(_: Client, callback: CallbackQuery):
             [Button("إضافة سطر للحذف", callback_data="add_line_to_remove")],
             [Button("إضافة استبدال جملة", callback_data="add_sentence_replacement")],
             [Button("إضافة استبدال سطر", callback_data="add_line_replacement")],
-            [Button("إضافة كلمة للتجاهل", callback_data="add_ignored_word")],  
+            [Button("كلمات الفلترة", callback_data="add_selected_word")],  
 
 
             [Button("إلغاء", callback_data="cancel_control")]
@@ -265,9 +267,9 @@ async def add_line_replacement(_: Client, callback: CallbackQuery):
     await callback.edit_message_text("أدخل السطر الذي ترغب في استبداله:", reply_markup=ForceReply(selective=True))
 
 
-@app2.on_callback_query(filters.regex(r"^add_ignored_word$"))
+@app2.on_callback_query(filters.regex(r"^add_selected_word$"))
 async def add_ignored_word_callback(_: Client, callback: CallbackQuery):
-    await callback.edit_message_text("أدخل الكلمة التي ترغب في تجاهلها:", reply_markup=ForceReply(selective=True))
+    await callback.edit_message_text("أدخل الكلمات التي ترغب في إضافتها للفلترة (مفصولة بفاصلة):", reply_markup=ForceReply(selective=True))
 
 
 @app2.on_message(filters.reply & filters.text)
@@ -308,6 +310,14 @@ async def process_user_input(_: Client, message: Message):
         data["ignored_words"] = ignored_words
         save_data(data)
         await message.reply(f"تمت إضافة الكلمة '{new_word}' إلى قائمة التجاهل.")
+        
+    elif "أدخل الكلمات التي ترغب في إضافتها للفلترة (مفصولة بفاصلة):" in message.reply_to_message.text:
+        words = message.text.split(",")
+        selected_words = data.get("selected_words", [])
+        selected_words.extend([word.strip() for word in words])  # إضافة الكلمات كما هي
+        data["selected_words"] = selected_words
+        save_data(data)
+        await message.reply(f"تمت إضافة الكلمات التالية للفلترة: {', '.join(words)}")
 
 async def get_user_input(user_id: int) -> Union[str, None]:
     try:
@@ -329,7 +339,7 @@ async def show_data(_: Client, message: Message):
         f"**الاسطر التي يتم حذفها:**\n{data.get('lines_to_remove_starting_with', [])}\n\n"
         f"**جمل يتم استبدالها:**\n{data.get('sentence_replacements', {})}\n\n"
         f"**اسطر يتم استبدالها:**\n{data.get('line_replacements', {})}\n\n"
-        f"**كلمات الفلترة :**\n{data.get('ignored_words', [])}\n\n"
+        f"**كلمات الفلترة :**\n{data.get('selected_words', [])}\n\n"
     )
     await message.reply(data_message)
 
